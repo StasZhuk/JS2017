@@ -17,9 +17,6 @@ function returnFirstArgument(arg) {
  */
 function defaultParameterValue(a, b) {
     b == undefined ? b = 100 : b;  
-    // if (b === undefined) {
-    //     b = 100;
-    // }
 
     return a + b;
 }
