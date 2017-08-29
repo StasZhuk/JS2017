@@ -8,7 +8,6 @@
 function returnFirstArgument(arg) {
     return arg;
 }
-
 /*
  Задание 2:
 
