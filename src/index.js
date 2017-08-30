@@ -10,8 +10,40 @@
  Зарпещено использовать встроенные методы для работы с массивами
  */
 function isAllTrue(array, fn) {
-}
+    const ERROR1 = 'empty array';
+    const ERROR2 = 'fn is not a function';
+    var arrLength = array.length;
+    var flag = 0;
 
+    try {
+        if (!Array.isArray(array) || arrLength === 0) {     
+            throw new Error(ERROR1);
+        } else if (typeof(fn) !== 'function') {
+            throw new Error(ERROR2);
+        }
+
+        for (let i = 0; i < arrLength; i++) {
+            var arrItem = array[i];
+
+            if (!fn(arrItem)) {
+                --flag;
+            }
+        }
+    
+        if (flag == 0) {
+            return true;
+        }
+        
+        return false;
+
+    } catch (e) {
+        if (e.message === ERROR1) {
+            throw ERROR1;
+        } else if (e.message === ERROR2) {
+            throw ERROR2;
+        }
+    }
+}
 /*
  Задача 2:
  Функция принимает массив и фильтрующую фукнцию и должна вернуть true или false
@@ -53,8 +85,8 @@ function calculator() {
 }
 
 export {
-    isAllTrue,
-    isSomeTrue,
-    returnBadArguments,
-    calculator
+    isAllTrue
+    // isSomeTrue,
+    // returnBadArguments,
+    // calculator
 };
