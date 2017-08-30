@@ -13,7 +13,6 @@ function isAllTrue(array, fn) {
     const ERROR1 = 'empty array';
     const ERROR2 = 'fn is not a function';
     var arrLength = array.length;
-    var flag = 0;
 
     try {
         if (!Array.isArray(array) || arrLength === 0) {     
@@ -26,19 +25,15 @@ function isAllTrue(array, fn) {
             var arrItem = array[i];
 
             if (!fn(arrItem)) {
-                --flag;
+                return false;
             }
         }
-    
-        if (flag == 0) {
-            return true;
-        }
         
-        return false;
+        return true;
     } catch (e) {
         if (e.message === ERROR1) {
             throw ERROR1;
-        } else if (e.message === ERROR2) {
+        } else {
             throw ERROR2;
         }
     }
@@ -77,7 +72,7 @@ function isSomeTrue(array, fn) {
     } catch (e) {
         if (e.message === ERROR1) {
             throw ERROR1;
-        } else if (e.message === ERROR2) {
+        } else {
             throw ERROR2;
         }
     }
@@ -157,7 +152,7 @@ function calculator(number) {
         }
         obj.div = function() {
             for (let i = 0; i < arguments.length; i++) {
-                if (number === 0 || arguments[i] == 0) {
+                if (number === 0 || arguments[i] === 0) {
                     throw new Error(ERROR2);
                 }
                 number /= arguments[i];
