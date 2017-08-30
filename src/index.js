@@ -35,7 +35,6 @@ function isAllTrue(array, fn) {
         }
         
         return false;
-
     } catch (e) {
         if (e.message === ERROR1) {
             throw ERROR1;
@@ -54,8 +53,35 @@ function isAllTrue(array, fn) {
  Зарпещено использовать встроенные методы для работы с массивами
  */
 function isSomeTrue(array, fn) {
-}
+    const ERROR1 = 'empty array';
+    const ERROR2 = 'fn is not a function';
+    var arrLength = array.length;
 
+    try {
+        if (!Array.isArray(array) || arrLength === 0) {     
+            throw new Error(ERROR1);
+        } else if (typeof(fn) !== 'function') {
+            throw new Error(ERROR2);
+        }
+
+        for (let i = 0; i < arrLength; i++) {
+            var arrItem = array[i];
+
+            if (fn(arrItem)) {
+                return true;
+            }
+        }
+
+        return false;
+
+    } catch (e) {
+        if (e.message === ERROR1) {
+            throw ERROR1;
+        } else if (e.message === ERROR2) {
+            throw ERROR2;
+        }
+    }
+}
 /*
  Задача 3:
  Функция принимает заранее неизветсное количество аргументов, первым из которых является функция fn
@@ -65,8 +91,30 @@ function isSomeTrue(array, fn) {
  - fn не является функцией (с текстом "fn is not a function")
  */
 function returnBadArguments(fn) {
-}
+    const ERROR = 'fn is not a function';
+    var argLength = arguments.length;
+    var newArr = [];
 
+    try {
+        if (typeof(fn) !== 'function') {
+            throw new Error(ERROR);
+        }
+    } catch (e) {
+        throw ERROR;
+    }
+
+    for (let i = 1; i < argLength; i++) {
+        var argument = arguments[i];
+
+        try {
+            fn(argument);
+        } catch (e) {
+            newArr.push(argument);
+        }
+    }
+
+    return newArr;
+}
 /*
  Задача 4:
  Функция имеет параметр number (по умолчанию - 0)
@@ -81,12 +129,64 @@ function returnBadArguments(fn) {
  - number не является числом (с текстом "number is not a number")
  - какой-либо из аргументов div является нулем (с текстом "division by 0")
  */
-function calculator() {
+function calculator(number) {
+    const ERROR1 = 'number is not a number';
+    const ERROR2 = 'division by 0';
+    var obj = {};
+
+    number === undefined ? number = 0 : number;
+
+    try {
+        if (typeof number !== 'number') {
+            throw new Error(ERROR1);
+        }
+
+        obj.sum = function() {
+            for (let i = 0; i < arguments.length; i++) {
+                number += arguments[i];
+            }
+
+            return number;
+        }
+        obj.dif = function() {
+            for (let i = 0; i < arguments.length; i++) {
+                number -= arguments[i];
+            }
+
+            return number;
+        }
+        obj.div = function() {
+            for (let i = 0; i < arguments.length; i++) {
+                if (number === 0 || arguments[i] == 0) {
+                    throw new Error(ERROR2);
+                }
+                number /= arguments[i];
+            }
+
+            return number;
+        }
+        obj.mul = function() {
+            for (let i = 0; i < arguments.length; i++) {
+                number *= arguments[i];
+            }
+
+            return number;
+        } 
+
+    } catch (e) {
+        if (e.message == ERROR1) {
+            throw ERROR1;
+        } else {
+            throw ERROR2;
+        }
+    }   
+
+    return obj;
 }
 
 export {
-    isAllTrue
-    // isSomeTrue,
-    // returnBadArguments,
-    // calculator
+    isAllTrue,
+    isSomeTrue,
+    returnBadArguments,
+    calculator
 };
