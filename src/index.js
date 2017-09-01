@@ -97,29 +97,31 @@ function upperProps(obj) {
  Напишите аналог встроенного метода slice для работы с массивами
  */
 function slice(array, from, to) {
-    var newArray = [];
-  
-    to === undefined || to > array.length ? to = array.length : to;
-
-    if (from < 0) {
-        if (to < 0) {
-            -to > array.length ? to = -array.length : to
-            for (let i = array.length - 1 + from; i > array.length - 1 + to; i--) {
-                newArray.push(array[i]);
-            }
-        } else {
-            for (let i = array.length - 1 + from; i > array.length - 1 - to; i--) {
-                newArray.push(array[i]);
-            }
-        }       
-    } else {
-        for (let i = from; i < to; i++) {
-            newArray.push(array[i]);
-        }
+    var newArray = [],
+        i;
+    
+    if (to === undefined || to > array.length) {
+        to = array.length;
     }
-
+    
+    if (to < 0) {
+        to = array.length + to;
+    }
+    
+    if (from < 0) {
+        from = array.length + from;
+    }
+    
+    if (from < -array.length || from === undefined) {
+        from = 0;
+    }
+    
+    for ( i = from; i < to; i++ ) {
+        newArray.push(array[i]);
+    }
+    
     return newArray;
-}
+}  
 
 /*
  Задача 9 *:
