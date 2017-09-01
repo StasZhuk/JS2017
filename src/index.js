@@ -29,17 +29,21 @@ function map(array, fn) {
  Напишите аналог встроенного метода reduce для работы с массивами
  */
 function reduce(array, fn, initial) {
-    var newArray = [];
-    
-    for (var i = 0; i < array.length; i++) {
-        if (initial === undefined) {
-            initial = array[i];
-        //     newArray[i] = fn(initial, array[i + 1], i, array);
-        //     initial = newArray[i];
-        }
-        newArray[i] = fn(initial, array[i], i, array);
-        // initial = newArray[i];
+    var arrayLength = array.length,
+        currentElem,
+        i = 0;
+
+    if (initial === undefined) {
+        initial = array[0];
+        i++;
     }
+
+    for (; i < arrayLength; i++) {
+        currentElem = array[i];
+        initial = fn(initial, currentElem, i, array);
+    }
+
+    return initial;
 }
 
 /*
@@ -48,6 +52,7 @@ function reduce(array, fn, initial) {
  Функция должна удалить указанное свойство из указанного объекта
  */
 function deleteProperty(obj, prop) {
+    delete obj[prop];
 }
 
 /*
@@ -56,6 +61,11 @@ function deleteProperty(obj, prop) {
  Функция должна проверить существует ли укзаанное свойство в указанном объекте
  */
 function hasProperty(obj, prop) {
+    if ( obj.hasOwnProperty(prop)) {
+        return true;
+    }
+
+    return false;
 }
 
 /*
@@ -63,6 +73,9 @@ function hasProperty(obj, prop) {
  Функция должна получить все перечисляемые свойства объекта и вернуть их в виде массива
  */
 function getEnumProps(obj) {
+    var array = Object.keys(obj);
+    
+    return array;
 }
 
 /*
@@ -70,6 +83,13 @@ function getEnumProps(obj) {
  Функция должна перебрать все свойства объекта, преобразовать их имена в верхний регистра и вернуть в виде массива
  */
 function upperProps(obj) {
+    var array = [];
+
+    for (var prop in obj) {
+        array.push(prop.toUpperCase());
+    }
+
+    return array;
 }
 
 /*
@@ -77,7 +97,20 @@ function upperProps(obj) {
  Напишите аналог встроенного метода slice для работы с массивами
  */
 function slice(array, from, to) {
+    // var newArray = [];
+
+    // to === undefined ? to = array.length : to;
+ 
+    // for (let i = from; i < to; i++) {
+    //     // console.log(array[i]);
+    //     newArray.push(array[i]);
+    //     // console.log(newArray);
+    // }
+
+    // return newArray;
 }
+
+// slice([1,2,3,4,5,6,7], 1, 3);
 
 /*
  Задача 9 *:
