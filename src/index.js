@@ -97,20 +97,29 @@ function upperProps(obj) {
  Напишите аналог встроенного метода slice для работы с массивами
  */
 function slice(array, from, to) {
-    // var newArray = [];
+    var newArray = [];
+  
+    to === undefined || to > array.length ? to = array.length : to;
 
-    // to === undefined ? to = array.length : to;
- 
-    // for (let i = from; i < to; i++) {
-    //     // console.log(array[i]);
-    //     newArray.push(array[i]);
-    //     // console.log(newArray);
-    // }
+    if (from < 0) {
+        if (to < 0) {
+            -to > array.length ? to = -array.length : to
+            for (let i = array.length - 1 + from; i > array.length - 1 + to; i--) {
+                newArray.push(array[i]);
+            }
+        } else {
+            for (let i = array.length - 1 + from; i > array.length - 1 - to; i--) {
+                newArray.push(array[i]);
+            }
+        }       
+    } else {
+        for (let i = from; i < to; i++) {
+            newArray.push(array[i]);
+        }
+    }
 
-    // return newArray;
+    return newArray;
 }
-
-// slice([1,2,3,4,5,6,7], 1, 3);
 
 /*
  Задача 9 *:
@@ -118,6 +127,13 @@ function slice(array, from, to) {
  Proxy должен перехватывать все попытки записи значений свойств и возводить это значение в квадрат
  */
 function createProxy(obj) {
+    let proxy = new Proxy(obj, {
+        set(target, prop, value) {
+            return target[prop] = value * value;
+        }
+    });
+
+    return proxy;
 }
 
 export {
