@@ -7,6 +7,11 @@
  * @return {Element}
  */
 function createDivWithText(text) {
+    var div = document.createElement('DIV');
+
+    div.textContent = text;
+
+    return div; 
 }
 
 /**
@@ -16,6 +21,11 @@ function createDivWithText(text) {
  * @return {Element}
  */
 function createAWithHref(hrefValue) {
+    var a = document.createElement('A');
+    
+    a.setAttribute('href', hrefValue);
+    
+    return a; 
 }
 
 /**
@@ -25,6 +35,9 @@ function createAWithHref(hrefValue) {
  * @param {Element} where - куда вставлять
  */
 function prepend(what, where) {
+    var firstElemWhere = where.firstChild;
+
+    where.insertBefore(what, firstElemWhere);
 }
 
 /**
@@ -42,6 +55,18 @@ function prepend(what, where) {
  * т.к. следующим соседом этих элементов является элемент с тегом P
  */
 function findAllPSiblings(where) {
+    var listElem = where.children,
+        array = [];
+
+    for (var i = 0; i < listElem.length - 1; i++) {
+        var sibling = listElem[i].nextElementSibling;
+
+        if (sibling.tagName == 'P') {
+            array.push(listElem[i]);
+        }
+    }
+
+    return array;
 }
 
 /**
@@ -55,8 +80,8 @@ function findAllPSiblings(where) {
 function findError(where) {
     var result = [];
 
-    for (var i = 0; i < where.childNodes.length; i++) {
-        result.push(where.childNodes[i].innerText);
+    for (var i = 0; i < where.children.length; i++) {
+        result.push(where.children[i].innerText);
     }
 
     return result;
@@ -76,6 +101,15 @@ function findError(where) {
  * должно быть преобразовано в <div></div><p></p>
  */
 function deleteTextNodes(where) {
+    var listNode = where.childNodes;
+
+    for (var i = listNode.length - 1; i >= 0; i--) {
+        var node = listNode[i];
+
+        if (node.nodeType == Node.TEXT_NODE) {
+            where.removeChild(node);
+        }
+    }
 }
 
 /**
@@ -89,6 +123,18 @@ function deleteTextNodes(where) {
  * должно быть преобразовано в <span><div><b></b></div><p></p></span>
  */
 function deleteTextNodesRecursive(where) {
+    var listNode = where.childNodes;
+    
+    for (var i = 0; i < listNode.length; i++) {
+        var node = listNode[i];
+
+        if (node.nodeType == Node.ELEMENT_NODE) {
+            deleteTextNodesRecursive(node);
+        } else {
+            where.removeChild(node);
+            --i;
+        }
+    }
 }
 
 /**
@@ -114,6 +160,53 @@ function deleteTextNodesRecursive(where) {
  * }
  */
 function collectDOMStat(root) {
+    var obj = {
+        tags: {},
+        classes: {},
+        texts: 0
+    };
+
+    function gothroughRoot(elem) {
+        let listNode = elem.childNodes;
+        
+        for (let i = 0; i < listNode.length; i++) {
+            let node = listNode[i];
+            
+            if (node.nodeType == Node.ELEMENT_NODE) {
+                tagCollect(node);
+                classCollect(node);
+                gothroughRoot(node);
+            } else {
+                obj.texts += 1;
+            }
+        } 
+    }
+
+    function tagCollect(elem) {
+        var tagName = elem.tagName;
+        
+        if (!obj.tags.hasOwnProperty(tagName)) {
+            obj.tags[tagName] = 1;
+        } else {
+            obj.tags[tagName] += 1;
+        }
+    }
+
+    function classCollect(elem) {  
+        for (let i = 0; i < elem.classList.length; i++) {
+            var className = elem.classList[i];
+
+            if (!obj.classes.hasOwnProperty(className)) {
+                obj.classes[className] = 1;
+            } else {
+                obj.classes[className] += 1;
+            }
+        }
+    }
+
+    gothroughRoot(root);
+
+    return obj;
 }
 
 /**
