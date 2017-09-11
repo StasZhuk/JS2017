@@ -24,10 +24,10 @@ let homeworkContainer = document.querySelector('#homework-container');
  */
 function createDiv() {
     let div = document.createElement('DIV');
-    let divWidth = Math.random() * 100 + 'px';
-    let divHeight = Math.random() * 100 + 'px';
-    let divPosX = Math.random() * 90 + 'vw';
-    let divPosY = Math.random() * 90 + 'vh';
+    let divWidth = (Math.random() * 100).toFixed() + 'px';
+    let divHeight = (Math.random() * 100).toFixed() + 'px';
+    let divPosX = (Math.random() * 90).toFixed() + 'vw';
+    let divPosY = (Math.random() * 90).toFixed() + 'vh';
 
     div.classList.add('draggable-div');
 
@@ -39,7 +39,7 @@ function createDiv() {
     div.style.backgroundColor = getRandomColor();
 
     // задаем случайное позиционирование
-    div.style.position = 'absolute';
+    div.style.position = 'relative';
     div.style.top = divPosX;
     div.style.left = divPosY;
 
