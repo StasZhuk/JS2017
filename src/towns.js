@@ -36,6 +36,39 @@ let homeworkContainer = document.querySelector('#homework-container');
  * @return {Promise<Array<{name: string}>>}
  */
 function loadTowns() {
+    return new Promise((resolve) => {
+        let xhr = new XMLHttpRequest();
+
+        // получаем данные от ресурса
+        xhr.open('GET', 'https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json');
+        xhr.responseType = 'json';
+        xhr.send();
+
+        // после загрузки данных производим необходимые манипуляции
+        xhr.addEventListener('load', function() {
+            let list = xhr.response;
+            let cityArray = [];
+            let sortCityArray = [];
+            
+            // // создаем простой массив из названий городов 
+            list.forEach(function(city) {
+                cityArray.push(city.name);
+            });
+
+            // сортируем массив
+            cityArray = cityArray.sort();
+
+            // создаем новый отсортированный массив с объектами городами
+            cityArray.forEach((city) => {
+                var obj = {
+                    'name': city
+                }
+
+                sortCityArray.push(obj);
+            });
+            resolve(sortCityArray);
+        })
+    })
 }
 
 /**
@@ -52,15 +85,55 @@ function loadTowns() {
  * @return {boolean}
  */
 function isMatching(full, chunk) {
+    if (full.toUpperCase().indexOf(chunk.toUpperCase()) >= 0) {
+        return true
+    } 
+
+    return false;
 }
 
 let loadingBlock = homeworkContainer.querySelector('#loading-block');
 let filterBlock = homeworkContainer.querySelector('#filter-block');
 let filterInput = homeworkContainer.querySelector('#filter-input');
 let filterResult = homeworkContainer.querySelector('#filter-result');
-let townsPromise;
+let townsPromise = loadTowns;
 
 filterInput.addEventListener('keyup', function() {
+    let val = filterInput.value;
+
+    if (val === '') {
+        filterResult.innerHTML = '';
+    } else {
+        townsPromise()
+            .then((listCitys) => {  // удачная загрузка
+                loadingBlock.style.display = 'none';
+                filterBlock.style.display = 'block';
+
+                //  проверка на совпадение и вывод результатов поиска
+                listCitys.forEach((city) => {
+                    if (isMatching(city.name, val)) {
+                        let nameCityElem = document.createElement('div');
+
+                        nameCityElem.innerText = city.name;
+                        filterResult.appendChild(nameCityElem);
+                    }
+                })
+            })
+            .catch(() => { // если ошибка 
+                let button = document.createElement('button');
+
+                //  наполняем содержимым блок для вывода об ошиьке
+                button.innerText = 'повторить';
+                filterResult.innerText = 'Не удалось загрузить города';
+                filterResult.appendChild(button);
+
+                // устанавливаем обработчик на кнопку для повтора загрузки
+                button.addEventListener('click', () => {
+                    filterResult.innerHTML = '';
+                    townsPromise();
+                })
+            })
+    }
 });
 
 export {
