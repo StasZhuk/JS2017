@@ -36,7 +36,7 @@ let homeworkContainer = document.querySelector('#homework-container');
  * @return {Promise<Array<{name: string}>>}
  */
 function loadTowns() {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
         let xhr = new XMLHttpRequest();
 
         // получаем данные от ресурса
@@ -46,27 +46,25 @@ function loadTowns() {
 
         // после загрузки данных производим необходимые манипуляции
         xhr.addEventListener('load', function() {
-            let list = xhr.response;
-            let cityArray = [];
-            let sortCityArray = [];
+            let listOfTown = xhr.response;
             
-            // // создаем простой массив из названий городов 
-            list.forEach(function(city) {
-                cityArray.push(city.name);
-            });
+            listOfTown.sort(sortTowns);
 
-            // сортируем массив
-            cityArray = cityArray.sort();
+            function sortTowns(a, b) {
+                if (a.name > b.name) {
+                    return 1;
+                } else if (a.name < b.name) {
+                    return -1;
+                } 
 
-            // создаем новый отсортированный массив с объектами городами
-            cityArray.forEach((city) => {
-                var obj = {
-                    'name': city
-                }
+                return 0;
+            }
 
-                sortCityArray.push(obj);
-            });
-            resolve(sortCityArray);
+            if (xhr.status < 400) {
+                resolve(listOfTown);                
+            } else {
+                reject();
+            }
         })
     })
 }
@@ -101,9 +99,9 @@ let townsPromise = loadTowns;
 filterInput.addEventListener('keyup', function() {
     let val = filterInput.value;
 
-    if (val === '') {
-        filterResult.innerHTML = '';
-    } else {
+    filterTowns();
+
+    function filterTowns () {
         townsPromise()
             .then((listCitys) => {  // удачная загрузка
                 loadingBlock.style.display = 'none';
@@ -117,6 +115,9 @@ filterInput.addEventListener('keyup', function() {
                         nameCityElem.innerText = city.name;
                         filterResult.appendChild(nameCityElem);
                     }
+                    if (val === '') {
+                        filterResult.innerHTML = '';
+                    }
                 })
             })
             .catch(() => { // если ошибка 
@@ -124,16 +125,18 @@ filterInput.addEventListener('keyup', function() {
 
                 //  наполняем содержимым блок для вывода об ошиьке
                 button.innerText = 'повторить';
-                filterResult.innerText = 'Не удалось загрузить города';
-                filterResult.appendChild(button);
+                loadingBlock.innerText = 'Не удалось загрузить города';
+                loadingBlock.appendChild(button);
 
                 // устанавливаем обработчик на кнопку для повтора загрузки
                 button.addEventListener('click', () => {
-                    filterResult.innerHTML = '';
-                    townsPromise();
+                    loadingBlock.innerHTML = 'Загрузка...';
+
+                    filterTowns();
                 })
             })
     }
+
 });
 
 export {

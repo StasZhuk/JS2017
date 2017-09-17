@@ -35,28 +35,21 @@ function loadAndSortTowns() {
 
         // после загрузки данных производим необходимые манипуляции
         xhr.addEventListener('load', function() {
-            let list = xhr.response;
-            let cityArray = [];
-            let sortCityArray = [];
-            
-            // создаем простой массив из названий городов 
-            list.forEach(function(city) {
-                cityArray.push(city.name);
-            });
+            let listOfTown = xhr.response;
 
-            // сортируем массив
-            cityArray = cityArray.sort();
+            listOfTown.sort(sortTowns);
 
-            // создаем новый отсортированный массив с объектами городами
-            cityArray.forEach(function(city) {
-                var obj = {
-                    'name': city
-                }
+            function sortTowns(a, b) {
+                if (a.name > b.name) {
+                    return 1;
+                } else if (a.name < b.name) {
+                    return -1;
+                } 
 
-                sortCityArray.push(obj);
-            });
+                return 0;
+            }
 
-            resolve(sortCityArray);
+            resolve(listOfTown);
         })
     });
 
