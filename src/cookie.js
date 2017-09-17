@@ -53,11 +53,11 @@ filterNameInput.addEventListener('keyup', function() {
     } else {
     // если фильтр есть, то сравниваем с куками браузера
         for (let cookie in cookieInBrowserObj) { 
-            // если есть совпадения, удаяем из табицы
+            // если нет совпадений, удаяем из табицы
             if (cookie.indexOf(filterInputValue) < 0 && cookieInBrowserObj[cookie].indexOf(filterInputValue) < 0) {
                 deleteTableCookie(cookie);
             }
-            // если нет совпадений, добавляем в таблицу
+            // если есть совпадения, добавляем в таблицу
             if (cookie.indexOf(filterInputValue) >= 0 || cookieInBrowserObj[cookie].indexOf(filterInputValue) >= 0) {
                 createTableCookie(cookie, cookieInBrowserObj[cookie]);
             }
@@ -77,7 +77,7 @@ addButton.addEventListener('click', () => {
         return false
     }
 
-    // елси кука с таким же именем и значением уже есть
+    // елси кука с таким именем и значением уже есть
     if (cookieInBrowserObj.hasOwnProperty(cookieName) && cookieInBrowserObj[cookieName] === cookieValue) {
         return false
     }
@@ -91,7 +91,7 @@ addButton.addEventListener('click', () => {
     // добовляем куку в браузер
     createBrowserCookie(cookieName, cookieValue);
 
-    // добавляем в таблицу, если проходит по фильтру
+    // добавляем куку в таблицу, если проходит по фильтру
     if (cookieName.indexOf(filterInputValue) >= 0 || cookieValue.indexOf(filterInputValue) >= 0) {
         createTableCookie(cookieName, cookieValue);        
     }
