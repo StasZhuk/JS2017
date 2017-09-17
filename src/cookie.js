@@ -40,68 +40,61 @@ let addButton = homeworkContainer.querySelector('#add-button');
 let listTable = homeworkContainer.querySelector('#list-table tbody');
 
 filterNameInput.addEventListener('keyup', function() {
-    // получаем список всех кук в массив
-    let arrayOfBrowserCookie = document.cookie.split('; ');
-    let arrayOfElemTableCookie = document.querySelectorAll('#list-table tbody tr');    
     let filterInputValue = filterNameInput.value;
-    let sortArrayOfCookie = [];
+    let cookieInBrowserObj = getCookies(); 
 
-    console.log(arrayOfElemTableCookie);
+    listTable.innerHTML = '';
 
-    // получаем массив кук из браузера по фильтру
-    arrayOfBrowserCookie.forEach((cookie) => {
-        if (cookie.toUpperCase().indexOf(filterInputValue.toUpperCase()) >= 0) {
-            sortArrayOfCookie.push(cookie);
-        }
-    })
-
-    // сравниваем массив кук браузера и табличных кук, показываем те что попадают под фильтр
-    for (let i = 0; i < arrayOfElemTableCookie.length; i++) {
-        let elemTableCookie = arrayOfElemTableCookie[i];
-        let elemAttr = elemTableCookie.getAttribute('name');
-        elemTableCookie.style.display = 'none'; 
-
-        sortArrayOfCookie.forEach((browserCookie) => {
-            if (elemAttr === browserCookie) {
-                elemTableCookie.style.display = 'table-row';
+    // если фильтр пустой, отображаем все куки
+    if (filterInputValue === '') {
+        for (let cookie in cookieInBrowserObj) {
+            createTableCookie(cookie, cookieInBrowserObj[cookie]);
+        }   
+    } else {
+    // если фильтр есть, то сравниваем с куками браузера
+        for (let cookie in cookieInBrowserObj) { 
+            // если есть совпадения, удаяем из табицы
+            if (cookie.indexOf(filterInputValue) < 0 && cookieInBrowserObj[cookie].indexOf(filterInputValue) < 0) {
+                deleteTableCookie(cookie);
             }
-        });
-
-        // если фильтр пустой, отображаем все куки
-        if (filterInputValue === '') {
-            elemTableCookie.style.display = 'table-row';        
+            // если нет совпадений, добавляем в таблицу
+            if (cookie.indexOf(filterInputValue) >= 0 || cookieInBrowserObj[cookie].indexOf(filterInputValue) >= 0) {
+                createTableCookie(cookie, cookieInBrowserObj[cookie]);
+            }
         }
     }
-
-    // очищаем массив
-    sortArrayOfCookie.length = 0;
 });
 
 // обработчик кнопки добавления куки
 addButton.addEventListener('click', () => {
     let cookieName = addNameInput.value;
     let cookieValue = addValueInput.value;
-    let cookieInBrowserObj = getCookies(); 
-    let cookieInTable = listTable.querySelectorAll('tr');    
-    let cookieInTableLength = cookieInTable.length;    
+    let filterInputValue = filterNameInput.value;
+    let cookieInBrowserObj = getCookies();    
 
-    console.log(cookieInBrowserObj[cookieName] === cookieValue);
-
-    // еси хотябы одно поле пустое не добавяем куку
+    // если хотябы одно поле пустое не добавяем куку
     if (cookieName === '' || cookieValue === '') {
         return false
     }
 
-    console.log(cookieInBrowserObj.hasOwnProperty(cookieName));
-
+    // елси кука с таким же именем и значением уже есть
     if (cookieInBrowserObj.hasOwnProperty(cookieName) && cookieInBrowserObj[cookieName] === cookieValue) {
         return false
     }
 
-    // добовляем куки в браузер и в таблицу
-    
+    // елси кука с таким же именем, но с другим значением
+    if (cookieInBrowserObj.hasOwnProperty(cookieName) && cookieInBrowserObj[cookieName] !== cookieValue) {
+        deleteBrowserCookie(cookieName, cookieInBrowserObj[cookieName]);
+        deleteTableCookie(cookieName);
+    }
+
+    // добовляем куку в браузер
     createBrowserCookie(cookieName, cookieValue);
-    createTableCookie(cookieName, cookieValue);
+
+    // добавляем в таблицу, если проходит по фильтру
+    if (cookieName.indexOf(filterInputValue) >= 0 || cookieValue.indexOf(filterInputValue) >= 0) {
+        createTableCookie(cookieName, cookieValue);        
+    }
 });
 
 // обработчик кнопки удаления куки
@@ -152,7 +145,17 @@ function deleteBrowserCookie(name) {
 
     document.cookie = `${name}=''; expires=${date}`; 
 }
+// функция удаления куки из таблицы
+function deleteTableCookie(name) {
+    let cookieInTable = document.getElementsByName(name)[0];
+    
+    if (cookieInTable === undefined) {
+        return false;
+    }
+    cookieInTable.remove();
+}
 
+// функция создает объект из кук которые есть в браузере
 function getCookies() {
     return document.cookie
         .split('; ')
